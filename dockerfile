@@ -20,7 +20,7 @@ RUN npm install
 COPY . .
 
 # Build da aplicação usando bun
-RUN bun build --target=node server.ts
+RUN bun build --target=node src/server.ts
 
 # Exponha a porta na qual a aplicação vai rodar
 EXPOSE 3000
