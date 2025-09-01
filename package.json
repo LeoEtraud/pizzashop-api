@@ -2,7 +2,7 @@
   "name": "pizzashop",
   "type": "module",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start": "node dist/server.js",
     "build": "bun build --target=node src/http/server.ts --outdir=dist",
