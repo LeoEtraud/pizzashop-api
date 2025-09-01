@@ -16,10 +16,13 @@ COPY package*.json ./
 # Instale as dependências
 RUN npm install
 
-# Copie todo o restante da aplicação (incluindo src/http)
+# Copie todo o restante da aplicação
 COPY . .
 
-# Build da aplicação usando bun
+# Verifique a estrutura de arquivos dentro do contêiner
+RUN ls -R /app
+
+# Build da aplicação usando bun (ajustando o caminho para o arquivo correto)
 RUN bun build --target=node src/server.ts
 
 # Exponha a porta na qual a aplicação vai rodar
