@@ -1,4 +1,5 @@
 import {createRequire} from "node:module";
+import { Elysia } from 'elysia';
 var __create = Object.create;
 var __getProtoOf = Object.getPrototypeOf;
 var __defProp = Object.defineProperty;
@@ -48892,7 +48893,8 @@ var db3 = drizzle(client, { schema: exports_schema });
 
 // src/http/routes/register-restaurant.ts
 var import_elysia = __toESM(require_cjs2(), 1);
-var registerRestaurant = new import_elysia.default().post("/restaurants", async ({ body, set }) => {
+var appa = new import_elysia.default();  
+var registerRestaurant = appa.post("/restaurants", async ({ body, set }) => {
   const { restaurantName, managerName, email, phone } = body;
   const [manager] = await db3.insert(users).values({
     name: managerName,
