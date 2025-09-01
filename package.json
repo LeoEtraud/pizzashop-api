@@ -4,13 +4,14 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node dist/server.js",
+    "build": "bun build --target=node src/http/server.ts",
     "generate": "drizzle-kit generate:pg",
     "dev": "bun --watch src/http/server.ts",
     "migrate": "bun src/db/migrate.ts",
     "seed": "bun src/db/seed.ts"
   },
-  "author": "Diego Fernandes <diego.schell.f@gmail.com>",
+  "author": "Leonardo Duarte <leonardo.duarte.of@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "@elysiajs/cookie": "^0.7.0",
