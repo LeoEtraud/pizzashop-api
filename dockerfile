@@ -1,6 +1,9 @@
 # Use a imagem oficial do Node.js
 FROM node:20
 
+# Instalar o bash
+RUN apt-get update && apt-get install -y bash
+
 # Instalar o bun
 RUN curl -fsSL https://bun.sh/install | bash
 
