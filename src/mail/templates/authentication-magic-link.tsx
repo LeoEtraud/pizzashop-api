@@ -11,18 +11,22 @@ import {
   Section,
   Tailwind,
   Text,
-} from '@react-email/components'
+} from "@react-email/components";
 
 interface AuthenticationMagicLinkTemplateProps {
-  userEmail: string
-  authLink: string
+  userEmail: string;
+  authLink: string;
+  appName?: string;
+  expiresInMinutes?: number;
 }
 
 export function AuthenticationMagicLinkTemplate({
   userEmail,
   authLink,
+  appName = "Pizza Shop",
+  expiresInMinutes = 15,
 }: AuthenticationMagicLinkTemplateProps) {
-  const previewText = `Faça login na Pizza Shop`
+  const previewText = `Faça login na ${appName}`;
 
   return (
     <Html>
@@ -34,13 +38,20 @@ export function AuthenticationMagicLinkTemplate({
             <Section className="mt-[32px] text-center">
               <span className="text-2xl">🍕</span>
             </Section>
+
             <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
-              Faça login na Pizza Shop
+              Faça login na {appName}
             </Heading>
+
             <Text className="text-black text-[14px] leading-[24px]">
-              Você solicitou um link para login na Pizza Shop através do email{' '}
-              {userEmail}.
+              Você solicitou um link para login na {appName} através do e-mail{" "}
+              <strong>{userEmail}</strong>.
             </Text>
+
+            <Text className="text-black text-[14px] leading-[24px]">
+              Este link expira em <strong>{expiresInMinutes} minuto(s)</strong>.
+            </Text>
+
             <Section className="text-center mt-[32px] mb-[32px]">
               <Button
                 className="bg-sky-500 rounded text-white px-5 py-3 text-[12px] font-semibold no-underline text-center"
@@ -49,20 +60,26 @@ export function AuthenticationMagicLinkTemplate({
                 Entrar agora
               </Button>
             </Section>
+
             <Text className="text-black text-[14px] leading-[24px]">
-              ou copie a URL abaixo e cole em seu browser:{' '}
-              <Link href={authLink} className="text-sky-500 no-underline">
+              ou copie a URL abaixo e cole em seu navegador:{" "}
+              <Link
+                href={authLink}
+                className="text-sky-500 no-underline break-all"
+              >
                 {authLink}
               </Link>
             </Text>
+
             <Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
+
             <Text className="text-[#666666] text-[12px] leading-[24px]">
               Se você não solicitou esse link de autenticação, apenas descarte
-              esse e-mail.
+              este e-mail.
             </Text>
           </Container>
         </Body>
       </Tailwind>
     </Html>
-  )
+  );
 }

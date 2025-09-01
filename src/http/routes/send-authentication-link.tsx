@@ -6,6 +6,8 @@ import { env } from "@/env";
 import { UnauthorizedError } from "./errors/unauthorized-error";
 import { transporter } from "@/mail/client";
 import { minutes } from "@/utils/time";
+import { render } from "@react-email/render";
+import { AuthenticationMagicLinkTemplate } from "@/mail/templates/authentication-magic-link";
 
 export const sendAuthenticationLink = new Elysia().post(
   "/authenticate",
@@ -36,18 +38,32 @@ export const sendAuthenticationLink = new Elysia().post(
 
     console.log("Magic link:", authLink.toString());
 
+    const html = await render(
+      AuthenticationMagicLinkTemplate({
+        userEmail: email,
+        authLink: authLink.toString(),
+        appName: "Pizza Shop",
+        expiresInMinutes: 15,
+      })
+    );
+
+    const text = await render(
+      AuthenticationMagicLinkTemplate({
+        userEmail: email,
+        authLink: authLink.toString(),
+        appName: "Pizza Shop",
+        expiresInMinutes: 15,
+      }),
+      { plainText: true }
+    );
+
     // Envio de e-mail com Nodemailer
     await transporter.sendMail({
       from: `"Pizza Shop" <${env.SMTP_USER}>`,
       to: email,
       subject: "[Pizza Shop] Seu link de acesso",
-      html: `
-        <p>Olá,</p>
-        <p>Clique no link abaixo para entrar na aplicação (expira em 15 minutos):</p>
-        <p><a href="${authLink}">${authLink}</a></p>
-        <br/>
-        <p>Se não foi você que solicitou, apenas ignore este e-mail.</p>
-      `,
+      html,
+      text, // opcional, mas recomendado
     });
 
     return { message: "E-mail enviado (verifique sua caixa de entrada)" };
