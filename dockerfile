@@ -4,6 +4,9 @@ FROM node:20
 # Instalar o bun
 RUN curl -fsSL https://bun.sh/install | bash
 
+# Adicionar o diretório do bun ao PATH
+ENV PATH="/root/.bun/bin:${PATH}"
+
 # Defina o diretório de trabalho
 WORKDIR /app
 
@@ -12,9 +15,6 @@ COPY package*.json ./
 
 # Instale as dependências
 RUN npm install
-
-# Instale o bun
-RUN curl -fsSL https://bun.sh/install | bash
 
 # Build da aplicação usando bun
 RUN bun build --target=node src/http/server.ts
