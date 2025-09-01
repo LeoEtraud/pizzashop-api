@@ -26,7 +26,8 @@ COPY . .
 RUN ls -R /app
 
 # Build da aplicação usando bun (ajustando o caminho para o arquivo correto)
-RUN bun build --target=node src/server.ts
+RUN bun build --target=node src/server.ts || cat /app/node_modules/@faker-js/faker/dist/cjs/modules/error.log
+
 
 # Exponha a porta na qual a aplicação vai rodar
 EXPOSE 3000
