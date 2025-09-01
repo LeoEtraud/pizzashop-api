@@ -1,6 +1,9 @@
 # Use a imagem oficial do Node.js
 FROM node:20
 
+# Instalar o bun
+RUN curl -fsSL https://bun.sh/install | bash
+
 # Defina o diretório de trabalho
 WORKDIR /app
 
@@ -10,8 +13,11 @@ COPY package*.json ./
 # Instale as dependências
 RUN npm install
 
-# Build da aplicação
-RUN npm run build
+# Instale o bun
+RUN curl -fsSL https://bun.sh/install | bash
+
+# Build da aplicação usando bun
+RUN bun build --target=node src/http/server.ts
 
 # Copie o restante da aplicação
 COPY . .
@@ -20,4 +26,4 @@ COPY . .
 EXPOSE 3000
 
 # Inicie a aplicação
-CMD ["npm", "start"]
+CMD ["bun", "run", "start"]
