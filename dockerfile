@@ -16,14 +16,14 @@ COPY package*.json ./
 # Instale as dependências
 RUN npm install
 
-# Build da aplicação usando bun
-RUN bun build --target=node src/http/server.ts
-
-# Copie o restante da aplicação
+# Copie todo o restante da aplicação (incluindo src/http)
 COPY . .
+
+# Build da aplicação usando bun
+RUN bun build --target=node server.ts
 
 # Exponha a porta na qual a aplicação vai rodar
 EXPOSE 3000
 
 # Inicie a aplicação
-CMD ["bun", "run", "start"]
+CMD ["node", "dist/server.js"]
