@@ -94,6 +94,6 @@ const app = new Elysia()
     }
   });
 
-app.listen(3333); // ou a porta configurada no Render
+app.listen(10000); // ou a porta configurada no Render
 
 console.log(`🔥 HTTP server running...`);
