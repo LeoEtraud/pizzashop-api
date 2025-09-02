@@ -1,5 +1,5 @@
 import { createRequire } from "node:module";
-import Elysia from "./build/server";
+import Elysia from "./server";
 
 var __create = Object.create;
 var __getProtoOf = Object.getPrototypeOf;
