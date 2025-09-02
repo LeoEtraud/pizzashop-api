@@ -980,6 +980,8 @@ var deliverOrder = new Elysia24().use(authentication).patch(
 );
 
 // src/http/server.ts
+import dotenv from "dotenv";
+dotenv.config();
 var app = new Elysia25().use(
   cors({
     credentials: true,
@@ -1008,7 +1010,8 @@ var app = new Elysia25().use(
     }
   }
 });
-app.listen(3333);
-console.log(
-  `\u{1F525} HTTP server running at ${app.server?.hostname}:${app.server?.port}`
-);
+var server_default = app.fetch;
+console.log(`\u{1F525} HTTP server running...`);
+export {
+  server_default as default
+};

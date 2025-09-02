@@ -90,8 +90,7 @@ const app = new Elysia()
     }
   });
 
-app.listen(3333);
+// Substitua `listen` por `fetch` para compatibilidade com WebStandard
+export default app.fetch; // Isso permite que o servidor seja compatível com plataformas como Render
 
-console.log(
-  `🔥 HTTP server running at ${app.server?.hostname}:${app.server?.port}`
-);
+console.log(`🔥 HTTP server running...`);
