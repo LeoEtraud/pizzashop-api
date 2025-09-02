@@ -2,7 +2,7 @@ import { env } from "./chunk-2V7TP353.js";
 
 // src/http/authentication.ts
 import Elysia, { t } from "elysia";
-import cookie from "@elysiajs/cookie";
+import { cookie } from "@elysiajs/cookie";
 import { jwt } from "@elysiajs/jwt";
 
 // src/http/routes/errors/unauthorized-error.ts
