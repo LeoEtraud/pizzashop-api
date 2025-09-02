@@ -30,6 +30,10 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+console.log("API_BASE_URL:", process.env.API_BASE_URL);
+console.log("AUTH_REDIRECT_URL:", process.env.AUTH_REDIRECT_URL);
+console.log("DB_URL:", process.env.DB_URL);
+
 const app = new Elysia()
   .use(
     cors({
