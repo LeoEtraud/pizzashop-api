@@ -1,5 +1,5 @@
 import { createRequire } from "node:module";
-import Elysia from './path/to/build/server'; // Ajuste o caminho conforme o local do arquivo compilado
+import Elysia from "./build/server";
 
 var __create = Object.create;
 var __getProtoOf = Object.getPrototypeOf;
