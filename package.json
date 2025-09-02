@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "node dist/server.js",
+    "start": "node dist/http/server.js",
     "build": "tsup src/server.ts src/**/*.ts --format esm --out-dir dist",
     "generate": "drizzle-kit generate:pg",
     "dev": "bun --watch src/http/server.ts",
