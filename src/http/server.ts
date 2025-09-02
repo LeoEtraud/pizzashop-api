@@ -26,13 +26,15 @@ import { getDailyReceiptInPeriod } from "./routes/get-daily-receipt-in-period";
 import { getPopularProducts } from "./routes/get-popular-products";
 import { dispatchOrder } from "./routes/dispatch-order";
 import { deliverOrder } from "./routes/deliver-order";
-import dotenv from "dotenv";
 
-dotenv.config();
+// Só carrega dotenv em desenvolvimento
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 
 console.log("API_BASE_URL:", process.env.API_BASE_URL);
 console.log("AUTH_REDIRECT_URL:", process.env.AUTH_REDIRECT_URL);
-console.log("DB_URL:", process.env.DB_URL);
+console.log("DB_URL:", process.env.DB_URL ? "Present" : "Missing");
 
 const app = new Elysia()
   .use(
@@ -47,7 +49,17 @@ const app = new Elysia()
           return false;
         }
 
-        return true;
+        // Desenvolvimento
+        if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
+          return true;
+        }
+
+        // Produção (Render)
+        if (origin.includes(".onrender.com")) {
+          return true;
+        }
+
+        return false;
       },
     })
   )
@@ -94,6 +106,12 @@ const app = new Elysia()
     }
   });
 
-app.listen(10000); // ou a porta configurada no Render
-
-console.log(`🔥 HTTP server running...`);
+try {
+  const port = process.env.PORT || 10000;
+  app.listen(port, () => {
+    console.log(`🔥 HTTP server running on port ${port}...`);
+  });
+} catch (error) {
+  console.error("Failed to start server:", error);
+  process.exit(1);
+}
