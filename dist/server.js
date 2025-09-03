@@ -1288,7 +1288,7 @@ var deliverOrder = new Elysia25().use(authentication).patch(
 if (process.env.NODE_ENV !== "production") {
   __require("dotenv").config();
 }
-var requiredEnvVars = ["DATABASE_URL", "JWT_SECRET"];
+var requiredEnvVars = ["DB_URL", "JWT_SECRET_KEY"];
 var missingEnvVars = requiredEnvVars.filter(
   (varName) => !process.env[varName]
 );
@@ -1340,15 +1340,25 @@ var app = new Elysia26().use(
 });
 process.on("unhandledRejection", (reason, promise) => {
   console.error("Unhandled Rejection at:", promise, "reason:", reason);
-  process.exit(1);
+  if (process.env.NODE_ENV !== "production") {
+    process.exit(1);
+  }
 });
 process.on("uncaughtException", (error) => {
   console.error("Uncaught Exception:", error);
-  process.exit(1);
+  if (process.env.NODE_ENV !== "production") {
+    process.exit(1);
+  }
 });
 try {
   const port = process.env.PORT || 1e4;
   console.log(`Starting server on port ${port}...`);
+  console.log(`Environment variables:`, {
+    NODE_ENV: process.env.NODE_ENV,
+    PORT: process.env.PORT,
+    DB_URL: process.env.DB_URL ? "SET" : "NOT SET",
+    JWT_SECRET_KEY: process.env.JWT_SECRET_KEY ? "SET" : "NOT SET"
+  });
   app.listen(port, () => {
     console.log(`\u{1F525} HTTP server running on port ${port}...`);
     console.log(`Environment: ${process.env.NODE_ENV || "development"}`);

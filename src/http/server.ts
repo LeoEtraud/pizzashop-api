@@ -27,13 +27,13 @@ import { getPopularProducts } from "./routes/get-popular-products";
 import { dispatchOrder } from "./routes/dispatch-order";
 import { deliverOrder } from "./routes/deliver-order";
 
-// Só carrega dotenv em desenvolvimento
+// Carrega dotenv em desenvolvimento
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
 // Verifique variáveis críticas
-const requiredEnvVars = ["DATABASE_URL", "JWT_SECRET"];
+const requiredEnvVars = ["DB_URL", "JWT_SECRET_KEY"];
 const missingEnvVars = requiredEnvVars.filter(
   (varName) => !process.env[varName]
 );
@@ -127,17 +127,29 @@ const app = new Elysia()
 // Adicione handlers para erros não capturados
 process.on("unhandledRejection", (reason, promise) => {
   console.error("Unhandled Rejection at:", promise, "reason:", reason);
-  process.exit(1);
+  // Não sair imediatamente em produção para permitir recovery
+  if (process.env.NODE_ENV !== "production") {
+    process.exit(1);
+  }
 });
 
 process.on("uncaughtException", (error) => {
   console.error("Uncaught Exception:", error);
-  process.exit(1);
+  // Não sair imediatamente em produção para permitir recovery
+  if (process.env.NODE_ENV !== "production") {
+    process.exit(1);
+  }
 });
 
 try {
   const port = process.env.PORT || 10000;
   console.log(`Starting server on port ${port}...`);
+  console.log(`Environment variables:`, {
+    NODE_ENV: process.env.NODE_ENV,
+    PORT: process.env.PORT,
+    DB_URL: process.env.DB_URL ? 'SET' : 'NOT SET',
+    JWT_SECRET_KEY: process.env.JWT_SECRET_KEY ? 'SET' : 'NOT SET'
+  });
 
   app.listen(port, () => {
     console.log(`🔥 HTTP server running on port ${port}...`);
