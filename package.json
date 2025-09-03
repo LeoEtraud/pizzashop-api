@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsup src/http/server.ts --out-dir dist --format esm",
     "start": "node -r dotenv/config dist/http/server.js",
+    "start:prod": "node dist/http/server.js",
     "generate": "drizzle-kit generate:pg",
     "dev": "bun --watch src/http/server.ts",
     "migrate": "bun src/db/migrate.ts",
