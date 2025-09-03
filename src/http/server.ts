@@ -32,9 +32,18 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
-console.log("API_BASE_URL:", process.env.API_BASE_URL);
-console.log("AUTH_REDIRECT_URL:", process.env.AUTH_REDIRECT_URL);
-console.log("DB_URL:", process.env.DB_URL ? "Present" : "Missing");
+// Verifique variáveis críticas
+const requiredEnvVars = ["DATABASE_URL", "JWT_SECRET"];
+const missingEnvVars = requiredEnvVars.filter(
+  (varName) => !process.env[varName]
+);
+
+if (missingEnvVars.length > 0) {
+  console.error("Missing required environment variables:", missingEnvVars);
+  process.exit(1);
+}
+
+console.log("Environment variables check passed");
 
 const app = new Elysia()
   .use(
@@ -88,28 +97,52 @@ const app = new Elysia()
   .use(getMonthCanceledOrdersAmount)
   .use(getDailyReceiptInPeriod)
   .use(getPopularProducts)
+
+  // Health check endpoint
+  .get("/health", () => {
+    return {
+      status: "OK",
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || "development",
+    };
+  })
   .onError(({ code, error, set }) => {
+    console.error("Error:", code, error.message);
+
     switch (code) {
       case "VALIDATION": {
         set.status = error.status;
-
         return error.toResponse();
       }
       case "NOT_FOUND": {
         return new Response(null, { status: 404 });
       }
       default: {
-        console.error(error);
-
+        console.error("Unhandled error:", error);
         return new Response(null, { status: 500 });
       }
     }
   });
 
+// Adicione handlers para erros não capturados
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  process.exit(1);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception:", error);
+  process.exit(1);
+});
+
 try {
   const port = process.env.PORT || 10000;
+  console.log(`Starting server on port ${port}...`);
+
   app.listen(port, () => {
     console.log(`🔥 HTTP server running on port ${port}...`);
+    console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
+    console.log(`Health check available at: http://localhost:${port}/health`);
   });
 } catch (error) {
   console.error("Failed to start server:", error);
