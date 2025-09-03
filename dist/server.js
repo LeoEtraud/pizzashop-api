@@ -14,6 +14,23 @@ var __export = (target, all) => {
 import { Elysia as Elysia26 } from "elysia";
 import { cors } from "@elysiajs/cors";
 
+// src/env.ts
+import { z } from "zod";
+import { config } from "dotenv";
+config();
+var envSchema = z.object({
+  API_BASE_URL: z.string().url(),
+  AUTH_REDIRECT_URL: z.string().url(),
+  DB_URL: z.string().url().min(1),
+  JWT_SECRET_KEY: z.string().min(1),
+  RESEND_API_KEY: z.string().optional(),
+  SMTP_HOST: z.string(),
+  SMTP_PORT: z.coerce.number(),
+  SMTP_USER: z.string().email(),
+  SMTP_PASS: z.string()
+});
+var env = envSchema.parse(process.env);
+
 // src/db/schema/index.ts
 var schema_exports = {};
 __export(schema_exports, {
@@ -213,25 +230,6 @@ var productsRelations = relations6(products, ({ one, many }) => ({
 // src/db/connection.ts
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-
-// src/env.ts
-import { z } from "zod";
-import { config } from "dotenv";
-config();
-var envSchema = z.object({
-  API_BASE_URL: z.string().url(),
-  AUTH_REDIRECT_URL: z.string().url(),
-  DB_URL: z.string().url().min(1),
-  JWT_SECRET_KEY: z.string().min(1),
-  RESEND_API_KEY: z.string().optional(),
-  SMTP_HOST: z.string(),
-  SMTP_PORT: z.coerce.number(),
-  SMTP_USER: z.string().email(),
-  SMTP_PASS: z.string()
-});
-var env = envSchema.parse(process.env);
-
-// src/db/connection.ts
 var client = postgres(env.DB_URL);
 var db = drizzle(client, { schema: schema_exports });
 
@@ -1288,15 +1286,7 @@ var deliverOrder = new Elysia25().use(authentication).patch(
 if (process.env.NODE_ENV !== "production") {
   __require("dotenv").config();
 }
-var requiredEnvVars = ["DB_URL", "JWT_SECRET_KEY"];
-var missingEnvVars = requiredEnvVars.filter(
-  (varName) => !process.env[varName]
-);
-if (missingEnvVars.length > 0) {
-  console.error("Missing required environment variables:", missingEnvVars);
-  process.exit(1);
-}
-console.log("Environment variables check passed");
+console.log("Environment variables loaded successfully");
 var app = new Elysia26().use(
   cors({
     credentials: true,
@@ -1356,8 +1346,9 @@ try {
   console.log(`Environment variables:`, {
     NODE_ENV: process.env.NODE_ENV,
     PORT: process.env.PORT,
-    DB_URL: process.env.DB_URL ? "SET" : "NOT SET",
-    JWT_SECRET_KEY: process.env.JWT_SECRET_KEY ? "SET" : "NOT SET"
+    DB_URL: env.DB_URL ? "SET" : "NOT SET",
+    JWT_SECRET_KEY: env.JWT_SECRET_KEY ? "SET" : "NOT SET",
+    API_BASE_URL: env.API_BASE_URL ? "SET" : "NOT SET"
   });
   app.listen(port, () => {
     console.log(`\u{1F525} HTTP server running on port ${port}...`);

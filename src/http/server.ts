@@ -1,5 +1,6 @@
 import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
+import { env } from "../env";
 
 import { registerRestaurant } from "./routes/register-restaurant";
 import { registerCustomer } from "./routes/register-customer";
@@ -32,18 +33,7 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
-// Verifique variáveis críticas
-const requiredEnvVars = ["DB_URL", "JWT_SECRET_KEY"];
-const missingEnvVars = requiredEnvVars.filter(
-  (varName) => !process.env[varName]
-);
-
-if (missingEnvVars.length > 0) {
-  console.error("Missing required environment variables:", missingEnvVars);
-  process.exit(1);
-}
-
-console.log("Environment variables check passed");
+console.log("Environment variables loaded successfully");
 
 const app = new Elysia()
   .use(
@@ -147,8 +137,9 @@ try {
   console.log(`Environment variables:`, {
     NODE_ENV: process.env.NODE_ENV,
     PORT: process.env.PORT,
-    DB_URL: process.env.DB_URL ? 'SET' : 'NOT SET',
-    JWT_SECRET_KEY: process.env.JWT_SECRET_KEY ? 'SET' : 'NOT SET'
+    DB_URL: env.DB_URL ? 'SET' : 'NOT SET',
+    JWT_SECRET_KEY: env.JWT_SECRET_KEY ? 'SET' : 'NOT SET',
+    API_BASE_URL: env.API_BASE_URL ? 'SET' : 'NOT SET'
   });
 
   app.listen(port, () => {
