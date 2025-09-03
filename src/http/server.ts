@@ -35,6 +35,7 @@ if (process.env.NODE_ENV !== "production") {
 
 console.log("Environment variables loaded successfully");
 
+console.log("Creating Elysia app...");
 const app = new Elysia()
   .use(
     cors({
@@ -86,33 +87,40 @@ const app = new Elysia()
   .use(getDayOrdersAmount)
   .use(getMonthCanceledOrdersAmount)
   .use(getDailyReceiptInPeriod)
-  .use(getPopularProducts)
+  .use(getPopularProducts);
 
-  // Health check endpoint
-  .get("/health", () => {
-    return {
-      status: "OK",
-      timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV || "development",
-    };
-  })
-  .onError(({ code, error, set }) => {
-    console.error("Error:", code, error.message);
+console.log("Routes configured successfully");
 
-    switch (code) {
-      case "VALIDATION": {
-        set.status = error.status;
-        return error.toResponse();
-      }
-      case "NOT_FOUND": {
-        return new Response(null, { status: 404 });
-      }
-      default: {
-        console.error("Unhandled error:", error);
-        return new Response(null, { status: 500 });
-      }
+// Health check endpoint
+app.get("/health", () => {
+  return {
+    status: "OK",
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || "development",
+  };
+});
+
+console.log("Health check endpoint added");
+
+app.onError(({ code, error, set }) => {
+  console.error("Error:", code, error.message);
+
+  switch (code) {
+    case "VALIDATION": {
+      set.status = error.status;
+      return error.toResponse();
     }
-  });
+    case "NOT_FOUND": {
+      return new Response(null, { status: 404 });
+    }
+    default: {
+      console.error("Unhandled error:", error);
+      return new Response(null, { status: 500 });
+    }
+  }
+});
+
+console.log("Error handlers configured");
 
 // Adicione handlers para erros não capturados
 process.on("unhandledRejection", (reason, promise) => {
@@ -142,11 +150,26 @@ try {
     API_BASE_URL: env.API_BASE_URL ? 'SET' : 'NOT SET'
   });
 
-  app.listen(port, () => {
-    console.log(`🔥 HTTP server running on port ${port}...`);
-    console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
-    console.log(`Health check available at: http://localhost:${port}/health`);
-  });
+  console.log("About to start listening...");
+  
+  // Use Bun.serve for production environments
+  if (typeof Bun !== 'undefined') {
+    Bun.serve({
+      port: port,
+      fetch: app.fetch,
+    });
+    console.log(`🔥 HTTP server running on port ${port} with Bun...`);
+  } else {
+    // Fallback for Node.js environments
+    app.listen(port, () => {
+      console.log(`🔥 HTTP server running on port ${port}...`);
+      console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
+      console.log(`Health check available at: http://localhost:${port}/health`);
+      console.log("Server started successfully!");
+    });
+  }
+  
+  console.log("Listen call completed");
 } catch (error) {
   console.error("Failed to start server:", error);
   process.exit(1);

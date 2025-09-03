@@ -1287,6 +1287,7 @@ if (process.env.NODE_ENV !== "production") {
   __require("dotenv").config();
 }
 console.log("Environment variables loaded successfully");
+console.log("Creating Elysia app...");
 var app = new Elysia26().use(
   cors({
     credentials: true,
@@ -1306,13 +1307,17 @@ var app = new Elysia26().use(
       return false;
     }
   })
-).use(authentication).use(signOut).use(getProfile).use(getManagedRestaurant).use(registerRestaurant).use(registerCustomer).use(sendAuthenticationLink).use(authenticateFromLink).use(createOrder).use(approveOrder).use(cancelOrder).use(dispatchOrder).use(deliverOrder).use(getOrders).use(getOrderDetails).use(createEvaluation).use(getEvaluations).use(updateMenu).use(updateProfile).use(getMonthReceipt).use(getMonthOrdersAmount).use(getDayOrdersAmount).use(getMonthCanceledOrdersAmount).use(getDailyReceiptInPeriod).use(getPopularProducts).get("/health", () => {
+).use(authentication).use(signOut).use(getProfile).use(getManagedRestaurant).use(registerRestaurant).use(registerCustomer).use(sendAuthenticationLink).use(authenticateFromLink).use(createOrder).use(approveOrder).use(cancelOrder).use(dispatchOrder).use(deliverOrder).use(getOrders).use(getOrderDetails).use(createEvaluation).use(getEvaluations).use(updateMenu).use(updateProfile).use(getMonthReceipt).use(getMonthOrdersAmount).use(getDayOrdersAmount).use(getMonthCanceledOrdersAmount).use(getDailyReceiptInPeriod).use(getPopularProducts);
+console.log("Routes configured successfully");
+app.get("/health", () => {
   return {
     status: "OK",
     timestamp: (/* @__PURE__ */ new Date()).toISOString(),
     environment: process.env.NODE_ENV || "development"
   };
-}).onError(({ code, error, set }) => {
+});
+console.log("Health check endpoint added");
+app.onError(({ code, error, set }) => {
   console.error("Error:", code, error.message);
   switch (code) {
     case "VALIDATION": {
@@ -1328,6 +1333,7 @@ var app = new Elysia26().use(
     }
   }
 });
+console.log("Error handlers configured");
 process.on("unhandledRejection", (reason, promise) => {
   console.error("Unhandled Rejection at:", promise, "reason:", reason);
   if (process.env.NODE_ENV !== "production") {
@@ -1350,11 +1356,22 @@ try {
     JWT_SECRET_KEY: env.JWT_SECRET_KEY ? "SET" : "NOT SET",
     API_BASE_URL: env.API_BASE_URL ? "SET" : "NOT SET"
   });
-  app.listen(port, () => {
-    console.log(`\u{1F525} HTTP server running on port ${port}...`);
-    console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
-    console.log(`Health check available at: http://localhost:${port}/health`);
-  });
+  console.log("About to start listening...");
+  if (typeof Bun !== "undefined") {
+    Bun.serve({
+      port,
+      fetch: app.fetch
+    });
+    console.log(`\u{1F525} HTTP server running on port ${port} with Bun...`);
+  } else {
+    app.listen(port, () => {
+      console.log(`\u{1F525} HTTP server running on port ${port}...`);
+      console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
+      console.log(`Health check available at: http://localhost:${port}/health`);
+      console.log("Server started successfully!");
+    });
+  }
+  console.log("Listen call completed");
 } catch (error) {
   console.error("Failed to start server:", error);
   process.exit(1);
