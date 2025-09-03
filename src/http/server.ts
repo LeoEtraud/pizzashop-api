@@ -63,31 +63,106 @@ const app = new Elysia()
       },
     })
   )
-  .use(authentication)
-  .use(signOut)
-  .use(getProfile)
-  .use(getManagedRestaurant)
-  .use(registerRestaurant)
-  .use(registerCustomer)
-  .use(sendAuthenticationLink)
-  .use(authenticateFromLink)
-  .use(createOrder)
-  .use(approveOrder)
-  .use(cancelOrder)
-  .use(dispatchOrder)
-  .use(deliverOrder)
-  .use(getOrders)
-  .use(getOrderDetails)
-  .use(createEvaluation)
-  .use(getEvaluations)
-  .use(updateMenu)
-  .use(updateProfile)
-  .use(getMonthReceipt)
-  .use(getMonthOrdersAmount)
-  .use(getDayOrdersAmount)
-  .use(getMonthCanceledOrdersAmount)
-  .use(getDailyReceiptInPeriod)
-  .use(getPopularProducts);
+  .use(() => {
+    console.log("Loading authentication middleware...");
+    return authentication;
+  })
+  .use(() => {
+    console.log("Loading signOut route...");
+    return signOut;
+  })
+  .use(() => {
+    console.log("Loading getProfile route...");
+    return getProfile;
+  })
+  .use(() => {
+    console.log("Loading getManagedRestaurant route...");
+    return getManagedRestaurant;
+  })
+  .use(() => {
+    console.log("Loading registerRestaurant route...");
+    return registerRestaurant;
+  })
+  .use(() => {
+    console.log("Loading registerCustomer route...");
+    return registerCustomer;
+  })
+  .use(() => {
+    console.log("Loading sendAuthenticationLink route...");
+    return sendAuthenticationLink;
+  })
+  .use(() => {
+    console.log("Loading authenticateFromLink route...");
+    return authenticateFromLink;
+  })
+  .use(() => {
+    console.log("Loading createOrder route...");
+    return createOrder;
+  })
+  .use(() => {
+    console.log("Loading approveOrder route...");
+    return approveOrder;
+  })
+  .use(() => {
+    console.log("Loading cancelOrder route...");
+    return cancelOrder;
+  })
+  .use(() => {
+    console.log("Loading dispatchOrder route...");
+    return dispatchOrder;
+  })
+  .use(() => {
+    console.log("Loading deliverOrder route...");
+    return deliverOrder;
+  })
+  .use(() => {
+    console.log("Loading getOrders route...");
+    return getOrders;
+  })
+  .use(() => {
+    console.log("Loading getOrderDetails route...");
+    return getOrderDetails;
+  })
+  .use(() => {
+    console.log("Loading createEvaluation route...");
+    return createEvaluation;
+  })
+  .use(() => {
+    console.log("Loading getEvaluations route...");
+    return getEvaluations;
+  })
+  .use(() => {
+    console.log("Loading updateMenu route...");
+    return updateMenu;
+  })
+  .use(() => {
+    console.log("Loading updateProfile route...");
+    return updateProfile;
+  })
+  .use(() => {
+    console.log("Loading getMonthReceipt route...");
+    return getMonthReceipt;
+  })
+  .use(() => {
+    console.log("Loading getMonthOrdersAmount route...");
+    return getMonthOrdersAmount;
+  })
+  .use(() => {
+    console.log("Loading getDayOrdersAmount route...");
+    return getDayOrdersAmount;
+  })
+  .use(() => {
+    console.log("Loading getMonthCanceledOrdersAmount route...");
+    return getMonthCanceledOrdersAmount;
+  })
+  .use(() => {
+    console.log("Loading getDailyReceiptInPeriod route...");
+    return getDailyReceiptInPeriod;
+  })
+  .use(() => {
+    console.log("Loading getPopularProducts route...");
+    return getPopularProducts;
+  });
 
 console.log("Routes configured successfully");
 
@@ -154,18 +229,23 @@ try {
   
   // Use Bun.serve for production environments
   if (typeof Bun !== 'undefined') {
+    console.log("Using Bun.serve for production...");
     Bun.serve({
       port: port,
       fetch: app.fetch,
     });
     console.log(`🔥 HTTP server running on port ${port} with Bun...`);
+    console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
+    console.log(`Health check available at: http://localhost:${port}/health`);
+    console.log("Server started successfully with Bun!");
   } else {
+    console.log("Using Node.js listen for development...");
     // Fallback for Node.js environments
     app.listen(port, () => {
       console.log(`🔥 HTTP server running on port ${port}...`);
       console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
       console.log(`Health check available at: http://localhost:${port}/health`);
-      console.log("Server started successfully!");
+      console.log("Server started successfully with Node.js!");
     });
   }
   
