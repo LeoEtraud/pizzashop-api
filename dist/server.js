@@ -216,6 +216,8 @@ import postgres from "postgres";
 
 // src/env.ts
 import { z } from "zod";
+import { config } from "dotenv";
+config();
 var envSchema = z.object({
   API_BASE_URL: z.string().url(),
   AUTH_REDIRECT_URL: z.string().url(),
